@@ -110,3 +110,37 @@ form button{
     margin-top: 50px;
     text-transform: uppercase;
 }
+
+.change-theme{
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    color: #fff;
+    cursor: pointer;
+    user-select: none;
+}
+
+.light#app{
+    background-color: #fff;
+}
+
+.light#app .change-theme{
+    color: #000;
+}
+
+.light#app form input{
+    border: 1px solid #000;
+}
+
+.history{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    color: #fff;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.light#app .history{
+    color: #000;
+}

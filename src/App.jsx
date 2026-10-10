@@ -1,10 +1,13 @@
 import './App.css'
-import Weather from './components/Weather'
+import { ErrorBoundary } from './components/ErrorBoundary'
+import { Weather } from './components/Weather'
 
 function App() {
   return (
-    <Weather />
-  )
+      <ErrorBoundary>
+        <Weather />
+      </ErrorBoundary>
+  );
 }
 
 export default App

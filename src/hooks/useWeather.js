@@ -42,8 +42,11 @@ export function useWeather(city) {
             try {
 
                 const geoRes = await geoUrl(city, signal)
+                const place = geoRes?.results?.[0]
 
-                const {latitude, longitude, country, name} = geoRes?.results[0]
+
+                if (!place) throw new Error(`Город не найден`)
+                const { latitude, longitude, country, name } = place
 
                 const wRes = await weatherUrl(latitude, longitude, signal)
                 
