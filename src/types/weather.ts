@@ -25,9 +25,3 @@ export interface GeoCity {
   country: string;
   name: string;
 }
-
-export interface GeoResponse {
-  results: GeoCity[];
-}
-
-export type Forecast = Omit<WeatherData, "name" | "country">

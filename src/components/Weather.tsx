@@ -18,9 +18,14 @@ export const Weather = observer(function Weather() {
   const { data, loading, error, load, cityName } = weatherStore
   const [inputValue, setInputValue] = useState(cityName || "")
   const { theme, toggleTheme } = themeStore
+  const [password, setPassword]  = useState("")
 
   function onInputValueChange(e: ChangeEvent<HTMLInputElement>) {
     setInputValue(e.target.value)
+  }
+
+  function onPasswordChange(e: ChangeEvent<HTMLInputElement>) {
+    setPassword(e.target.value)
   }
 
   async function onSearchFormSumbit(e: FormEvent<HTMLFormElement>): Promise<void> {
@@ -72,7 +77,16 @@ export const Weather = observer(function Weather() {
             <span className="loading-bg"></span>
           </p>
         )}
-        <HistoryList cities={historyStore.cities} />
+        <HistoryList
+          cities={historyStore.cities}
+          removeHistory={historyStore.removeHistory}
+        />
+        <div>
+          <input value={password} onChange={onPasswordChange} />
+          <button onClick={() => historyStore.login(password)}>
+            {historyStore.token ? `Выйти: ${historyStore.token}` : "Войти"}
+          </button>
+        </div>
       </div>
     </div>
   );

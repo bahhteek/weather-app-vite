@@ -1,29 +1,7 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
-import { Forecast, GeoResponse, WeatherData, WeatherState } from "../types/weather";
+import { WeatherData, WeatherState } from "../types/weather";
 
-async function geoUrl(city: string, signal: AbortSignal): Promise<GeoResponse> {
-    const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city)}&count=1&language=ru`, { signal })
-
-    if (!response.ok) throw new Error(`Ошибка HTTP ${response.status}`)
-
-    const data = await response.json()
-
-    if (!data?.results?.length) throw new Error(`Город не найден`)
-
-    return data as GeoResponse
-}
-
-async function weatherUrl(lat: number, lon: number, signal: AbortSignal): Promise<Forecast> {
-    const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&timezone=auto`, { signal })
-
-    if (!response.ok) throw new Error(`Ошибка HTTP ${response.status}`)
-
-    const data = await response.json()
-    
-    if (!data) throw new Error(`Нет данных`)
-    
-    return data as Forecast
-}
+const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000"
 
 export class WeatherStore implements WeatherState {
   data: WeatherData | null = null;
@@ -58,21 +36,20 @@ export class WeatherStore implements WeatherState {
     this.data = null;
 
     try {
-      const geoRes = await geoUrl(city, signal);
+      const response = await fetch(
+        `${API}/weather?city=${encodeURIComponent(city)}`,
+        { signal },
+      );
 
-      const place = geoRes?.results?.[0]
-
-      if (!place) throw new Error(`Город не найден`)
-
-      const { latitude, longitude, country, name } = place;
-
-      const wRes = await weatherUrl(latitude, longitude, signal);
+      const data = await response.json();
 
       if (signal.aborted) return;
 
+      if (!response.ok) throw new Error(data.error ?? `Ошибка HTTP ${response.status}`);
+
       runInAction(() => {
-        this.data = { ...wRes, country, name };
-        this.cityName = name;
+        this.data = data;
+        this.cityName = data.name;
         this.loading = false;
       });
     } catch (e) {
