@@ -25,3 +25,11 @@ export interface GeoCity {
   country: string;
   name: string;
 }
+
+export type CityLabel = Pick<WeatherData, "name" | "country">
+
+export type WeatherDraft = Partial<WeatherData>
+
+export function labelOf(data: WeatherData): CityLabel {
+  return { name: data.name, country: data.country }
+}
